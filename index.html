@@ -42,7 +42,7 @@
       line-height: 1.5;
     }
 
-    /* 頂部企業識別橫幅（精密藍＋金屬銀質感） */
+    /* 頂部企業識別橫幅 */
     .hero-banner {
       background: linear-gradient(135deg, #0f213a 0%, #1d3f68 55%, #2c5c94 100%);
       border-bottom: 4px solid #94a3b8;
@@ -292,7 +292,7 @@
     /* 員工卡片區 */
     .balance-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
       gap: 14px;
     }
 
@@ -303,6 +303,7 @@
       background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
       cursor: pointer;
       transition: all 0.18s ease;
+      position: relative;
     }
 
     .person-card:hover {
@@ -321,12 +322,13 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      gap: 6px;
     }
 
     .avatar {
-      width: 34px;
-      height: 34px;
+      width: 32px;
+      height: 32px;
       border-radius: 9px;
       background: linear-gradient(135deg, #1d3f68 0%, #33669e 100%);
       color: #ffffff;
@@ -334,24 +336,52 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       border: 1px solid #94a3b8;
+      flex-shrink: 0;
     }
 
     .person-name {
       font-weight: 800;
-      font-size: 1.05rem;
+      font-size: 1.02rem;
       color: var(--ph-navy);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .person-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
     }
 
     .status-chip {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 700;
-      padding: 2px 8px;
+      padding: 2px 7px;
       border-radius: 999px;
     }
     .chip-pos { background: var(--green-bg); color: var(--green); }
     .chip-neg { background: var(--red-bg); color: var(--red); }
+
+    /* 刪除員工小按鈕 */
+    .btn-del-person {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      padding: 4px 6px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      line-height: 1;
+      transition: all 0.15s;
+    }
+    .btn-del-person:hover {
+      background: var(--red-bg);
+      color: var(--red);
+    }
 
     .person-amount {
       font-size: 1.35rem;
@@ -441,7 +471,6 @@
   <div class="hero-banner">
     <div class="hero-inner">
       <div class="brand-box">
-        <!-- 品漢精密 PH 金屬藍銀矢量徽標 -->
         <div class="brand-logo-wrap" title="P. H. Precision Industry">
           <svg width="58" height="44" viewBox="0 0 120 90" fill="none" xmlns="http://www.w3.org/2000/svg">
             <defs>
@@ -452,10 +481,8 @@
                 <stop offset="100%" stop-color="#64748b"/>
               </linearGradient>
             </defs>
-            <!-- 左側 P 幾何鋼構 -->
             <path d="M22 12 H66 L76 24 V48 L66 58 H40 V78 H22 L12 66 V24 Z" fill="url(#metalGrad)" stroke="#1d4ed8" stroke-width="4" stroke-linejoin="round"/>
             <rect x="38" y="28" width="22" height="14" rx="2" fill="#1e3a8a"/>
-            <!-- 右側 H 幾何鋼構 -->
             <path d="M84 12 H102 L110 24 V66 L102 78 H84 V52 H66 V36 H84 Z" fill="url(#metalGrad)" stroke="#1d4ed8" stroke-width="4" stroke-linejoin="round"/>
           </svg>
         </div>
@@ -531,7 +558,7 @@
     <!-- 2. 員工餘額卡片區 -->
     <div class="card">
       <div class="card-header">
-        <h2 class="card-title">💳 員工目前帳戶餘額（點選卡片可篩選個人明細）</h2>
+        <h2 class="card-title">💳 員工目前帳戶餘額（點卡片篩選明細，按 🗑️ 可刪除離職員工）</h2>
         <button class="btn-ghost" onclick="filterByPerson('ALL')">顯示全部員工</button>
       </div>
       <div id="balanceGrid" class="balance-grid">
@@ -578,6 +605,7 @@
   let allRecords = [];
   let currentFilter = 'ALL'; // 'ALL' | 'DEBT' | 員工姓名
   let debtNamesList = [];
+  let currentBalances = {};
 
   window.addEventListener('DOMContentLoaded', async () => {
     await detectTableAndLoad();
@@ -631,8 +659,14 @@
       totalPool += amt;
     });
 
+    currentBalances = balances;
     const names = Object.keys(balances);
     debtNamesList = names.filter(n => balances[n] < 0);
+
+    // 若目前篩選的員工已被刪除，自動重置為 ALL
+    if (currentFilter !== 'ALL' && currentFilter !== 'DEBT' && !names.includes(currentFilter)) {
+      currentFilter = 'ALL';
+    }
 
     // 1. 更新剩餘總金額與總人數
     const poolEl = document.getElementById('totalPoolValue');
@@ -667,7 +701,7 @@
     }
     toggleNewPersonInput();
 
-    // 4. 渲染員工餘額卡片
+    // 4. 渲染員工餘額卡片（右上角加入刪除員工按鈕）
     const gridEl = document.getElementById('balanceGrid');
     if (names.length === 0) {
       gridEl.innerHTML = '<p style="color:var(--text-sub); margin:0;">目前尚無紀錄，請從上方新增第一筆資料！</p>';
@@ -677,14 +711,18 @@
         const isPos = bal >= 0;
         const activeCls = (currentFilter === name || (currentFilter === 'DEBT' && !isPos)) ? 'active' : '';
         const firstChar = name.charAt(0);
+        const safeName = name.replace(/'/g, "\\'");
         return `
-          <div class="person-card ${activeCls}" onclick="filterByPerson('${name}')">
+          <div class="person-card ${activeCls}" onclick="filterByPerson('${safeName}')">
             <div class="person-top">
-              <div style="display:flex; align-items:center; gap:8px;">
+              <div style="display:flex; align-items:center; gap:8px; min-width:0;">
                 <div class="avatar">${firstChar}</div>
-                <span class="person-name">${name}</span>
+                <span class="person-name" title="${name}">${name}</span>
               </div>
-              <span class="status-chip ${isPos ? 'chip-pos' : 'chip-neg'}">${isPos ? '有餘額' : '需補款'}</span>
+              <div class="person-actions">
+                <span class="status-chip ${isPos ? 'chip-pos' : 'chip-neg'}">${isPos ? '有餘額' : '需補款'}</span>
+                <button class="btn-del-person" title="刪除 ${name}（含所有歷史資料）" onclick="deleteEmployee(event, '${safeName}')">🗑️</button>
+              </div>
             </div>
             <div class="person-amount ${isPos ? 'text-green' : 'text-red'}">
               ${isPos ? `NT$${bal.toLocaleString()}` : `-NT$${Math.abs(bal).toLocaleString()}`}
@@ -788,6 +826,7 @@
     await fetchRecords();
   }
 
+  // 刪除單筆紀錄
   async function deleteRecord(id) {
     if (!confirm('確定要刪除這筆紀錄嗎？刪除後餘額會自動重算。')) return;
 
@@ -796,6 +835,43 @@
       alert('刪除失敗：' + error.message);
       return;
     }
+    await fetchRecords();
+  }
+
+  // 刪除整位員工（包含該員工所有歷史交易資料）
+  async function deleteEmployee(event, name) {
+    event.stopPropagation(); // 避免觸發卡片篩選點擊事件
+
+    const bal = currentBalances[name] || 0;
+    const recordCount = allRecords.filter(r => (r.person_name || '').trim() === name).length;
+    const statusText = bal > 0
+      ? `尚有餘額 NT$${bal.toLocaleString()}（請確認已退還現金）`
+      : (bal < 0 ? `尚有欠款 NT$${Math.abs(bal).toLocaleString()}（請確認已補繳現金）` : '帳戶餘額為 NT$0（已結清）');
+
+    const msg = `⚠️ 確定要刪除離職員工「${name}」嗎？\n\n` +
+                `• 目前狀態：${statusText}\n` +
+                `• 影響範圍：將永久刪除該員工共 ${recordCount} 筆歷史儲值與點餐紀錄，且無法復原！`;
+
+    if (!confirm(msg)) return;
+
+    // 找出該員工所有紀錄的 ID 並一次刪除（相容姓名前後空白情況）
+    const idsToDelete = allRecords
+      .filter(r => (r.person_name || '').trim() === name)
+      .map(r => r.id);
+
+    if (idsToDelete.length === 0) return;
+
+    const { error } = await db
+      .from(TABLE_NAME)
+      .delete()
+      .in('id', idsToDelete);
+
+    if (error) {
+      alert('刪除員工資料失敗：' + error.message);
+      return;
+    }
+
+    alert(`已成功移除員工「${name}」及其所有歷史紀錄！`);
     await fetchRecords();
   }
 
