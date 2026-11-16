@@ -146,6 +146,16 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .stat-card.debt-alert {
+      border-top-color: var(--red);
+      cursor: pointer;
+    }
+    .stat-card.debt-alert:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(220, 38, 38, 0.12);
     }
 
     .stat-label {
@@ -159,6 +169,12 @@
       font-size: 1.6rem;
       font-weight: 900;
       color: var(--ph-navy);
+    }
+
+    .stat-value.debt-names {
+      font-size: 1.25rem;
+      line-height: 1.4;
+      word-break: break-word;
     }
 
     /* 通用白卡 */
@@ -461,16 +477,16 @@
     <!-- 頂部總覽數據卡 -->
     <div class="stats-row">
       <div class="stat-card">
-        <span class="stat-label">💰 剩餘總金額 </span>
+        <span class="stat-label">💰 剩餘總金額</span>
         <span id="totalPoolValue" class="stat-value">NT$0</span>
       </div>
       <div class="stat-card">
         <span class="stat-label">👥 總人數</span>
         <span id="totalPeopleValue" class="stat-value">0 人</span>
       </div>
-      <div class="stat-card">
-        <span class="stat-label">📝 累計交易筆數</span>
-        <span id="totalTxValue" class="stat-value">0 筆</span>
+      <div id="debtStatCard" class="stat-card" onclick="filterDebtPeople()">
+        <span class="stat-label">⚠️ 需補款名單</span>
+        <span id="debtPeopleValue" class="stat-value debt-names text-green">全員無欠款</span>
       </div>
     </div>
 
@@ -560,7 +576,8 @@
 
   let TABLE_NAME = 'ph_money';
   let allRecords = [];
-  let currentFilter = 'ALL';
+  let currentFilter = 'ALL'; // 'ALL' | 'DEBT' | 員工姓名
+  let debtNamesList = [];
 
   window.addEventListener('DOMContentLoaded', async () => {
     await detectTableAndLoad();
@@ -615,17 +632,30 @@
     });
 
     const names = Object.keys(balances);
+    debtNamesList = names.filter(n => balances[n] < 0);
 
-    // 更新頂部數據統計卡（新台幣 NT$）
+    // 1. 更新剩餘總金額與總人數
     const poolEl = document.getElementById('totalPoolValue');
     poolEl.textContent = totalPool >= 0
       ? `NT$${totalPool.toLocaleString()}`
       : `-NT$${Math.abs(totalPool).toLocaleString()}`;
     poolEl.className = 'stat-value ' + (totalPool >= 0 ? 'text-green' : 'text-red');
     document.getElementById('totalPeopleValue').textContent = `${names.length} 人`;
-    document.getElementById('totalTxValue').textContent = `${allRecords.length} 筆`;
 
-    // 更新下拉選單
+    // 2. 更新「需補款名單」卡片
+    const debtCardEl = document.getElementById('debtStatCard');
+    const debtValEl = document.getElementById('debtPeopleValue');
+    if (debtNamesList.length === 0) {
+      debtValEl.textContent = '全員無欠款';
+      debtValEl.className = 'stat-value debt-names text-green';
+      debtCardEl.classList.remove('debt-alert');
+    } else {
+      debtValEl.textContent = debtNamesList.join('、');
+      debtValEl.className = 'stat-value debt-names text-red';
+      debtCardEl.classList.add('debt-alert');
+    }
+
+    // 3. 更新下拉選單
     const selectEl = document.getElementById('personSelect');
     const prevSelected = selectEl.value;
     selectEl.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('') +
@@ -637,7 +667,7 @@
     }
     toggleNewPersonInput();
 
-    // 渲染員工餘額卡片（新台幣 NT$）
+    // 4. 渲染員工餘額卡片
     const gridEl = document.getElementById('balanceGrid');
     if (names.length === 0) {
       gridEl.innerHTML = '<p style="color:var(--text-sub); margin:0;">目前尚無紀錄，請從上方新增第一筆資料！</p>';
@@ -645,7 +675,7 @@
       gridEl.innerHTML = names.map(name => {
         const bal = balances[name];
         const isPos = bal >= 0;
-        const activeCls = currentFilter === name ? 'active' : '';
+        const activeCls = (currentFilter === name || (currentFilter === 'DEBT' && !isPos)) ? 'active' : '';
         const firstChar = name.charAt(0);
         return `
           <div class="person-card ${activeCls}" onclick="filterByPerson('${name}')">
@@ -654,7 +684,7 @@
                 <div class="avatar">${firstChar}</div>
                 <span class="person-name">${name}</span>
               </div>
-              <span class="status-chip ${isPos ? 'chip-pos' : 'chip-neg'}">${isPos ? '有餘額' : '待補款'}</span>
+              <span class="status-chip ${isPos ? 'chip-pos' : 'chip-neg'}">${isPos ? '有餘額' : '需補款'}</span>
             </div>
             <div class="person-amount ${isPos ? 'text-green' : 'text-red'}">
               ${isPos ? `NT$${bal.toLocaleString()}` : `-NT$${Math.abs(bal).toLocaleString()}`}
@@ -664,14 +694,20 @@
       }).join('');
     }
 
-    // 渲染明細表格（新台幣 NT$）
+    // 5. 渲染明細表格
     const tbody = document.getElementById('recordTableBody');
-    const filtered = currentFilter === 'ALL'
-      ? allRecords
-      : allRecords.filter(r => (r.person_name || '').trim() === currentFilter);
+    let filtered = allRecords;
+    let titleText = '📋 最新交易明細（全部員工）';
 
-    document.getElementById('historyTitle').textContent =
-      currentFilter === 'ALL' ? '📋 最新交易明細（全部員工）' : `📋 ${currentFilter} 的個人交易明細`;
+    if (currentFilter === 'DEBT') {
+      filtered = allRecords.filter(r => debtNamesList.includes((r.person_name || '').trim()));
+      titleText = '⚠️ 需補款員工的交易明細';
+    } else if (currentFilter !== 'ALL') {
+      filtered = allRecords.filter(r => (r.person_name || '').trim() === currentFilter);
+      titleText = `📋 ${currentFilter} 的個人交易明細`;
+    }
+
+    document.getElementById('historyTitle').textContent = titleText;
 
     if (filtered.length === 0) {
       tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--text-sub); padding:28px;">尚無符合的交易紀錄</td></tr>';
@@ -765,6 +801,12 @@
 
   function filterByPerson(name) {
     currentFilter = (currentFilter === name && name !== 'ALL') ? 'ALL' : name;
+    renderAll();
+  }
+
+  function filterDebtPeople() {
+    if (debtNamesList.length === 0) return;
+    currentFilter = currentFilter === 'DEBT' ? 'ALL' : 'DEBT';
     renderAll();
   }
 
