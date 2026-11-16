@@ -3,220 +3,527 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>公司午餐錢管理系統</title>
-  <!-- 引入 Supabase SDK -->
+  <title>公司午餐錢雲端帳本</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #2563eb;
-      --primary-hover: #1d4ed8;
-      --bg: #f8fafc;
-      --card: #ffffff;
-      --text: #1e293b;
-      --muted: #64748b;
+      --primary: #4f46e5;
+      --primary-light: #eef2ff;
+      --primary-hover: #4338ca;
+      --bg: #f1f5f9;
+      --surface: #ffffff;
+      --text-main: #0f172a;
+      --text-sub: #64748b;
       --border: #e2e8f0;
-      --green: #16a34a;
-      --green-bg: #dcfce7;
-      --red: #dc2626;
-      --red-bg: #fee2e2;
+      --green: #059669;
+      --green-bg: #d1fae5;
+      --red: #e11d48;
+      --red-bg: #ffe4e6;
+      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+      --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06);
+      --shadow-lg: 0 10px 25px -5px rgba(79, 70, 229, 0.15);
     }
 
-    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft JhengHei", sans-serif; }
-    body { background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-    .container { max-width: 960px; margin: 0 auto; }
-
-    header {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 24px; flex-wrap: wrap; gap: 12px;
+    * {
+      box-sizing: border-box;
+      font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, "Microsoft JhengHei", sans-serif;
     }
-    h1 { margin: 0; font-size: 1.6rem; display: flex; align-items: center; gap: 8px; }
-    .status-badge {
-      font-size: 0.85rem; padding: 4px 12px; border-radius: 999px;
-      background: #e0f2fe; color: #0369a1; font-weight: 600;
-    }
-    .status-badge.error { background: var(--red-bg); color: var(--red); }
 
-    .card {
-      background: var(--card); border-radius: 12px; padding: 20px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08); border: 1px solid var(--border);
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      margin: 0;
+      padding: 0 0 48px 0;
+      line-height: 1.5;
+    }
+
+    /* 頂部漸層橫幅 */
+    .hero-banner {
+      background: linear-gradient(135deg, #312e81 0%, #4f46e5 55%, #0ea5e9 100%);
+      color: white;
+      padding: 32px 20px 64px 20px;
+    }
+
+    .hero-inner {
+      max-width: 980px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .hero-title h1 {
+      margin: 0;
+      font-size: 1.75rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .hero-title p {
+      margin: 6px 0 0 0;
+      font-size: 0.92rem;
+      color: rgba(255, 255, 255, 0.82);
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.16);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #34d399;
+      box-shadow: 0 0 8px #34d399;
+    }
+    .status-dot.error { background: #fb7185; box-shadow: 0 0 8px #fb7185; }
+
+    /* 主容器 */
+    .container {
+      max-width: 980px;
+      margin: -38px auto 0 auto;
+      padding: 0 16px;
+    }
+
+    /* 數據摘要列 */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
       margin-bottom: 24px;
     }
-    .card h2 { margin-top: 0; font-size: 1.15rem; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
 
-    /* 員工餘額卡片網格 */
-    .balance-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px;
+    .stat-card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 18px 22px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
-    .person-card {
-      border: 1px solid var(--border); border-radius: 10px; padding: 14px;
-      cursor: pointer; transition: all 0.15s; background: #fff;
-    }
-    .person-card:hover { border-color: var(--primary); transform: translateY(-2px); }
-    .person-card.active { border: 2px solid var(--primary); background: #eff6ff; }
-    .person-name { font-weight: 700; font-size: 1.05rem; margin-bottom: 6px; }
-    .person-balance { font-size: 1.3rem; font-weight: 800; }
-    .positive { color: var(--green); }
-    .negative { color: var(--red); }
 
-    /* 表單區塊 */
+    .stat-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-sub);
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 1.65rem;
+      font-weight: 900;
+      color: var(--text-main);
+    }
+
+    /* 通用白卡 */
+    .card {
+      background: var(--surface);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .card-title {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* 記帳表單 */
     .form-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; align-items: end;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 14px;
+      align-items: end;
     }
-    .form-group { display: flex; flex-direction: column; gap: 6px; }
-    label { font-size: 0.88rem; font-weight: 600; color: var(--muted); }
-    input, select, button {
-      padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.95rem;
-    }
-    input:focus, select:focus { outline: none; border-color: var(--primary); }
-    
-    .btn-primary {
-      background: var(--primary); color: white; border: none; font-weight: 600; cursor: pointer;
-    }
-    .btn-primary:hover { background: var(--primary-hover); }
-    .btn-primary:disabled { background: #94a3b8; cursor: not-allowed; }
 
-    .btn-outline {
-      background: white; color: var(--text); border: 1px solid var(--border); cursor: pointer; font-size: 0.85rem; padding: 6px 12px;
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
-    .btn-outline:hover { background: #f1f5f9; }
+
+    label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-sub);
+    }
+
+    input, select {
+      width: 100%;
+      padding: 11px 14px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      font-size: 0.95rem;
+      color: var(--text-main);
+      background: #f8fafc;
+      transition: all 0.15s ease;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 12px 18px;
+      border-radius: 10px;
+      border: none;
+      background: var(--primary);
+      color: white;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: var(--shadow-lg);
+      transition: all 0.15s ease;
+    }
+
+    .btn-submit:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-submit:disabled {
+      background: #94a3b8;
+      box-shadow: none;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-ghost {
+      background: #f8fafc;
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      padding: 7px 14px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-ghost:hover {
+      background: #e2e8f0;
+    }
+
+    /* 員工卡片區 */
+    .balance-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+      gap: 14px;
+    }
+
+    .person-card {
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      background: #ffffff;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .person-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .person-card.active {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+    }
+
+    .person-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+    }
+
+    .person-name {
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--text-main);
+    }
+
+    .status-chip {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+    .chip-pos { background: var(--green-bg); color: var(--green); }
+    .chip-neg { background: var(--red-bg); color: var(--red); }
+
+    .person-amount {
+      font-size: 1.4rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+    .text-green { color: var(--green); }
+    .text-red { color: var(--red); }
+
+    /* 明細表格 */
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      background: white;
+    }
+
+    th {
+      background: #f8fafc;
+      color: var(--text-sub);
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 0.94rem;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f8fafc; }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+    .badge-in { background: var(--green-bg); color: var(--green); }
+    .badge-out { background: var(--red-bg); color: var(--red); }
 
     .btn-del {
-      background: transparent; color: #94a3b8; border: none; cursor: pointer; padding: 4px 8px; font-size: 0.85rem;
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: 8px;
+      transition: all 0.15s;
     }
-    .btn-del:hover { color: var(--red); background: var(--red-bg); border-radius: 6px; }
+    .btn-del:hover {
+      background: var(--red-bg);
+      color: var(--red);
+    }
 
-    /* 表格區塊 */
-    .table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; text-align: left; }
-    th, td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
-    th { background: #f8fafc; color: var(--muted); font-weight: 600; }
-    .tag {
-      padding: 3px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 600;
+    @media (max-width: 600px) {
+      .hero-banner { padding: 24px 16px 54px 16px; }
+      .hero-title h1 { font-size: 1.4rem; }
+      .card { padding: 18px; }
     }
-    .tag-in { background: var(--green-bg); color: var(--green); }
-    .tag-out { background: var(--red-bg); color: var(--red); }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <header>
-    <h1>🍱 公司午餐錢雲端記帳本</h1>
-    <span id="dbStatus" class="status-badge">連線資料庫中...</span>
-  </header>
-
-  <!-- 1. 新增記帳表單 -->
-  <div class="card">
-    <h2>➕ 新增紀錄</h2>
-    <div class="form-grid">
-      <div class="form-group">
-        <label>員工姓名</label>
-        <select id="personSelect" onchange="toggleNewPersonInput()">
-          <option value="__NEW__">＋ 新增員工...</option>
-        </select>
-        <input type="text" id="newPersonInput" placeholder="請輸入新員工姓名" style="margin-top:6px;">
+  <!-- 頂部視覺橫幅 -->
+  <div class="hero-banner">
+    <div class="hero-inner">
+      <div class="hero-title">
+        <h1>🍱 公司午餐雲端帳本</h1>
+        <p>跨裝置即時雲端同步・餘額與明細自動結算</p>
       </div>
-
-      <div class="form-group">
-        <label>收支類型</label>
-        <select id="txType" onchange="updateItemPlaceholder()">
-          <option value="expense">🍱 點餐扣款（支出）</option>
-          <option value="deposit">💰 預繳儲值（存入）</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>餐點名稱 / 備註</label>
-        <input type="text" id="itemInput" placeholder="例如：雞腿便當">
-      </div>
-
-      <div class="form-group">
-        <label>金額（元）</label>
-        <input type="number" id="amountInput" placeholder="請輸入正數金額" min="1">
-      </div>
-
-      <div class="form-group">
-        <button id="submitBtn" class="btn-primary" onclick="addRecord()">確認送出</button>
+      <div class="status-pill">
+        <span id="statusDot" class="status-dot"></span>
+        <span id="dbStatus">連線雲端中...</span>
       </div>
     </div>
   </div>
 
-  <!-- 2. 各員工餘額總覽 -->
-  <div class="card">
-    <div class="table-header">
-      <h2 style="border:none; margin:0; padding:0;">👥 員工目前餘額總覽（點擊可篩選明細）</h2>
-      <button class="btn-outline" onclick="filterByPerson('ALL')">顯示全部員工</button>
+  <div class="container">
+    <!-- 頂部總覽數據卡 -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <span class="stat-label">💰 午餐公積金淨餘額</span>
+        <span id="totalPoolValue" class="stat-value">$0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">👥 參與員工總人數</span>
+        <span id="totalPeopleValue" class="stat-value">0 人</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">📝 雲端累計交易筆數</span>
+        <span id="totalTxValue" class="stat-value">0 筆</span>
+      </div>
     </div>
-    <div id="balanceGrid" class="balance-grid">
-      <p style="color:var(--muted);">載入中...</p>
-    </div>
-  </div>
 
-  <!-- 3. 歷史交易明細 -->
-  <div class="card">
-    <div class="table-header">
-      <h2 id="historyTitle" style="border:none; margin:0; padding:0;">📋 最新記帳明細（全部）</h2>
-      <button class="btn-outline" onclick="fetchRecords()">🔄 重新整理</button>
+    <!-- 1. 新增記帳區塊 -->
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">✨ 快速新增一筆紀錄</h2>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>員工姓名</label>
+          <select id="personSelect" onchange="toggleNewPersonInput()">
+            <option value="__NEW__">＋ 新增員工...</option>
+          </select>
+          <input type="text" id="newPersonInput" placeholder="輸入新員工姓名" style="margin-top:6px;">
+        </div>
+
+        <div class="form-group">
+          <label>收支類型</label>
+          <select id="txType" onchange="updateItemPlaceholder()">
+            <option value="expense">🍱 點餐扣款（支出）</option>
+            <option value="deposit">💰 預繳儲值（存入）</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>餐點名稱 / 備註</label>
+          <input type="text" id="itemInput" placeholder="例如：雞腿便當">
+        </div>
+
+        <div class="form-group">
+          <label>金額（元）</label>
+          <input type="number" id="amountInput" placeholder="輸入正數金額" min="1">
+        </div>
+
+        <div class="form-group">
+          <button id="submitBtn" class="btn-submit" onclick="addRecord()">確認送出</button>
+        </div>
+      </div>
     </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>時間</th>
-            <th>員工</th>
-            <th>類型</th>
-            <th>項目 / 備註</th>
-            <th>金額</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody id="recordTableBody">
-          <tr><td colspan="6" style="text-align:center; color:var(--muted);">資料讀取中...</td></tr>
-        </tbody>
-      </table>
+
+    <!-- 2. 員工餘額卡片區 -->
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">💳 員工目前餘額（點選卡片可篩選個人明細）</h2>
+        <button class="btn-ghost" onclick="filterByPerson('ALL')">顯示全部員工</button>
+      </div>
+      <div id="balanceGrid" class="balance-grid">
+        <p style="color:var(--text-sub); margin:0;">正在從雲端讀取員工資料...</p>
+      </div>
+    </div>
+
+    <!-- 3. 交易明細列表 -->
+    <div class="card">
+      <div class="card-header">
+        <h2 id="historyTitle" class="card-title">📋 最新交易明細（全部）</h2>
+        <button class="btn-ghost" onclick="fetchRecords()">🔄 立即同步最新資料</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>時間</th>
+              <th>員工姓名</th>
+              <th>類型</th>
+              <th>項目 / 備註</th>
+              <th>金額</th>
+              <th style="text-align:right;">管理</th>
+            </tr>
+          </thead>
+          <tbody id="recordTableBody">
+            <tr><td colspan="6" style="text-align:center; color:var(--text-sub); padding:28px;">資料讀取中...</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
-</div>
 
 <script>
-  // 你的 Supabase 連線設定（已自動填入）
   const SUPABASE_URL = 'https://vzuckclnjyguwlcuiydn.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_Q42nR_bmu7tbSMzo3P_R5w_J-_ImqsP';
   const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  let TABLE_NAME = 'ph_money'; // 預設資料表名稱
+  let TABLE_NAME = 'ph_money';
   let allRecords = [];
   let currentFilter = 'ALL';
 
-  // 初始化載入
   window.addEventListener('DOMContentLoaded', async () => {
     await detectTableAndLoad();
   });
 
-  // 自動偵測資料表名稱（相容 ph_money 與 ph money）
   async function detectTableAndLoad() {
     const statusEl = document.getElementById('dbStatus');
+    const dotEl = document.getElementById('statusDot');
     let res = await db.from('ph_money').select('*').limit(1);
     
     if (res.error) {
-      // 如果找不到 ph_money，嘗試有空格的 ph money
       const resSpace = await db.from('ph money').select('*').limit(1);
       if (!resSpace.error) {
         TABLE_NAME = 'ph money';
       } else {
-        statusEl.textContent = '❌ 連線失敗：' + res.error.message;
-        statusEl.classList.add('error');
+        statusEl.textContent = '連線異常：' + res.error.message;
+        dotEl.classList.add('error');
         return;
       }
     }
 
-    statusEl.textContent = `✅ 雲端已同步 (${TABLE_NAME})`;
-    statusEl.classList.remove('error');
+    statusEl.textContent = '雲端資料庫已連線';
+    dotEl.classList.remove('error');
     await fetchRecords();
   }
 
-  // 讀取所有紀錄
   async function fetchRecords() {
     const { data, error } = await db
       .from(TABLE_NAME)
@@ -232,19 +539,28 @@
     renderAll();
   }
 
-  // 渲染畫面（下拉選單 + 餘額卡片 + 明細表格）
   function renderAll() {
-    // 1. 計算每位員工總餘額
     const balances = {};
+    let totalPool = 0;
+
     allRecords.forEach(r => {
       const name = (r.person_name || '未命名').trim();
+      const amt = Number(r.amount || 0);
       if (!balances[name]) balances[name] = 0;
-      balances[name] += Number(r.amount || 0);
+      balances[name] += amt;
+      totalPool += amt;
     });
 
     const names = Object.keys(balances);
 
-    // 2. 更新員工下拉選單（保留目前選取狀態）
+    // 更新頂部數據統計卡
+    const poolEl = document.getElementById('totalPoolValue');
+    poolEl.textContent = totalPool >= 0 ? `$${totalPool.toLocaleString()}` : `-$${Math.abs(totalPool).toLocaleString()}`;
+    poolEl.className = 'stat-value ' + (totalPool >= 0 ? 'text-green' : 'text-red');
+    document.getElementById('totalPeopleValue').textContent = `${names.length} 人`;
+    document.getElementById('totalTxValue').textContent = `${allRecords.length} 筆`;
+
+    // 更新下拉選單
     const selectEl = document.getElementById('personSelect');
     const prevSelected = selectEl.value;
     selectEl.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('') +
@@ -256,36 +572,44 @@
     }
     toggleNewPersonInput();
 
-    // 3. 渲染員工餘額卡片
+    // 渲染員工餘額卡片
     const gridEl = document.getElementById('balanceGrid');
     if (names.length === 0) {
-      gridEl.innerHTML = '<p style="color:var(--muted);">目前還沒有任何紀錄，請從上方新增第一筆！</p>';
+      gridEl.innerHTML = '<p style="color:var(--text-sub); margin:0;">目前尚無紀錄，請從上方新增第一筆資料！</p>';
     } else {
       gridEl.innerHTML = names.map(name => {
         const bal = balances[name];
-        const cls = bal >= 0 ? 'positive' : 'negative';
-        const label = bal >= 0 ? `餘額 $${bal}` : `欠款 $${Math.abs(bal)}`;
+        const isPos = bal >= 0;
         const activeCls = currentFilter === name ? 'active' : '';
+        const firstChar = name.charAt(0);
         return `
           <div class="person-card ${activeCls}" onclick="filterByPerson('${name}')">
-            <div class="person-name">${name}</div>
-            <div class="person-balance ${cls}">${label}</div>
+            <div class="person-top">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="avatar">${firstChar}</div>
+                <span class="person-name">${name}</span>
+              </div>
+              <span class="status-chip ${isPos ? 'chip-pos' : 'chip-neg'}">${isPos ? '有餘額' : '待補款'}</span>
+            </div>
+            <div class="person-amount ${isPos ? 'text-green' : 'text-red'}">
+              ${isPos ? `$${bal.toLocaleString()}` : `-$${Math.abs(bal).toLocaleString()}`}
+            </div>
           </div>
         `;
       }).join('');
     }
 
-    // 4. 渲染交易明細表格
+    // 渲染明細表格
     const tbody = document.getElementById('recordTableBody');
     const filtered = currentFilter === 'ALL'
       ? allRecords
       : allRecords.filter(r => (r.person_name || '').trim() === currentFilter);
 
     document.getElementById('historyTitle').textContent =
-      currentFilter === 'ALL' ? '📋 最新記帳明細（全部）' : `📋 ${currentFilter} 的記帳明細`;
+      currentFilter === 'ALL' ? '📋 最新交易明細（全部）' : `📋 ${currentFilter} 的個人交易明細`;
 
     if (filtered.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--muted);">尚無符合的紀錄</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--text-sub); padding:28px;">尚無符合的交易紀錄</td></tr>';
       return;
     }
 
@@ -295,27 +619,26 @@
       });
       const amt = Number(r.amount);
       const isDeposit = amt >= 0;
-      const tag = isDeposit
-        ? '<span class="tag tag-in">儲值</span>'
-        : '<span class="tag tag-out">扣款</span>';
-      const amtText = isDeposit
-        ? `<span class="positive" style="font-weight:700;">+$${amt}</span>`
-        : `<span class="negative" style="font-weight:700;">-$${Math.abs(amt)}</span>`;
+      const badge = isDeposit
+        ? '<span class="badge badge-in">儲值</span>'
+        : '<span class="badge badge-out">扣款</span>';
+      const amtHtml = isDeposit
+        ? `<span class="text-green" style="font-weight:800;">+$${amt.toLocaleString()}</span>`
+        : `<span class="text-red" style="font-weight:800;">-$${Math.abs(amt).toLocaleString()}</span>`;
 
       return `
         <tr>
-          <td style="color:var(--muted); font-size:0.88rem;">${dateStr}</td>
-          <td style="font-weight:600;">${r.person_name}</td>
-          <td>${tag}</td>
+          <td style="color:var(--text-sub); font-size:0.86rem;">${dateStr}</td>
+          <td style="font-weight:700;">${r.person_name}</td>
+          <td>${badge}</td>
           <td>${r.item || '-'}</td>
-          <td>${amtText}</td>
-          <td><button class="btn-del" onclick="deleteRecord(${r.id})">刪除</button></td>
+          <td>${amtHtml}</td>
+          <td style="text-align:right;"><button class="btn-del" onclick="deleteRecord(${r.id})">刪除</button></td>
         </tr>
       `;
     }).join('');
   }
 
-  // 新增一筆紀錄
   async function addRecord() {
     const selectVal = document.getElementById('personSelect').value;
     const newName = document.getElementById('newPersonInput').value.trim();
@@ -338,7 +661,6 @@
       item = txType === 'deposit' ? '預繳儲值' : '午餐便當';
     }
 
-    // 扣款自動轉為負數，儲值維持正數
     const finalAmount = txType === 'expense' ? -Math.abs(rawAmount) : Math.abs(rawAmount);
 
     const btn = document.getElementById('submitBtn');
@@ -357,7 +679,6 @@
       return;
     }
 
-    // 清空輸入框並重新讀取
     document.getElementById('itemInput').value = '';
     document.getElementById('amountInput').value = '';
     if (selectVal === '__NEW__') {
@@ -366,9 +687,8 @@
     await fetchRecords();
   }
 
-  // 刪除紀錄
   async function deleteRecord(id) {
-    if (!confirm('確定要刪除這筆紀錄嗎？刪除後餘額會自動重新計算。')) return;
+    if (!confirm('確定要刪除這筆紀錄嗎？刪除後餘額會自動重算。')) return;
 
     const { error } = await db.from(TABLE_NAME).delete().eq('id', id);
     if (error) {
@@ -378,20 +698,17 @@
     await fetchRecords();
   }
 
-  // 篩選員工
   function filterByPerson(name) {
     currentFilter = (currentFilter === name && name !== 'ALL') ? 'ALL' : name;
     renderAll();
   }
 
-  // 切換新員工輸入框顯示
   function toggleNewPersonInput() {
     const selectEl = document.getElementById('personSelect');
     const newInput = document.getElementById('newPersonInput');
     newInput.style.display = selectEl.value === '__NEW__' ? 'block' : 'none';
   }
 
-  // 切換提示文字
   function updateItemPlaceholder() {
     const type = document.getElementById('txType').value;
     const itemInput = document.getElementById('itemInput');
