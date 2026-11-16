@@ -3,27 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>公司午餐錢雲端帳本</title>
+  <title>品漢精密股份有限公司｜員工午餐雲端帳本</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #4f46e5;
-      --primary-light: #eef2ff;
-      --primary-hover: #4338ca;
+      /* 品漢精密企業色系：精密深藍 + 鈦銀金屬灰 */
+      --ph-navy: #162d4c;
+      --ph-blue: #234b7a;
+      --ph-blue-hover: #1a395e;
+      --ph-blue-light: #ebf2fa;
+      --ph-silver: #cbd5e1;
+      --ph-steel: #475569;
       --bg: #f1f5f9;
       --surface: #ffffff;
       --text-main: #0f172a;
       --text-sub: #64748b;
-      --border: #e2e8f0;
+      --border: #cbd5e1;
       --green: #059669;
       --green-bg: #d1fae5;
-      --red: #e11d48;
-      --red-bg: #ffe4e6;
-      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
-      --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06);
-      --shadow-lg: 0 10px 25px -5px rgba(79, 70, 229, 0.15);
+      --red: #dc2626;
+      --red-bg: #fee2e2;
+      --shadow-md: 0 4px 12px rgba(22, 45, 76, 0.07);
+      --shadow-lg: 0 8px 20px -4px rgba(35, 75, 122, 0.25);
     }
 
     * {
@@ -39,15 +42,16 @@
       line-height: 1.5;
     }
 
-    /* 頂部漸層橫幅 */
+    /* 頂部企業識別橫幅（精密藍＋金屬銀質感） */
     .hero-banner {
-      background: linear-gradient(135deg, #312e81 0%, #4f46e5 55%, #0ea5e9 100%);
+      background: linear-gradient(135deg, #0f213a 0%, #1d3f68 55%, #2c5c94 100%);
+      border-bottom: 4px solid #94a3b8;
       color: white;
-      padding: 32px 20px 64px 20px;
+      padding: 28px 20px 64px 20px;
     }
 
     .hero-inner {
-      max-width: 980px;
+      max-width: 1000px;
       margin: 0 auto;
       display: flex;
       justify-content: space-between;
@@ -56,29 +60,52 @@
       gap: 16px;
     }
 
-    .hero-title h1 {
-      margin: 0;
-      font-size: 1.75rem;
-      font-weight: 900;
-      letter-spacing: -0.02em;
+    .brand-box {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 16px;
+    }
+
+    .brand-logo-wrap {
+      background: linear-gradient(145deg, #ffffff 0%, #e2e8f0 100%);
+      padding: 8px 12px;
+      border-radius: 12px;
+      border: 2px solid #94a3b8;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-title h1 {
+      margin: 0;
+      font-size: 1.55rem;
+      font-weight: 900;
+      letter-spacing: 0.03em;
+    }
+
+    .hero-title .en-sub {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #cbd5e1;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 2px;
     }
 
     .hero-title p {
       margin: 6px 0 0 0;
-      font-size: 0.92rem;
-      color: rgba(255, 255, 255, 0.82);
+      font-size: 0.88rem;
+      color: rgba(255, 255, 255, 0.85);
     }
 
     .status-pill {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: rgba(255, 255, 255, 0.16);
+      background: rgba(15, 33, 58, 0.65);
       backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.25);
+      border: 1px solid rgba(203, 213, 225, 0.35);
       padding: 8px 16px;
       border-radius: 999px;
       font-size: 0.85rem;
@@ -96,7 +123,7 @@
 
     /* 主容器 */
     .container {
-      max-width: 980px;
+      max-width: 1000px;
       margin: -38px auto 0 auto;
       padding: 0 16px;
     }
@@ -111,10 +138,11 @@
 
     .stat-card {
       background: var(--surface);
-      border-radius: 16px;
+      border-radius: 14px;
       padding: 18px 22px;
       box-shadow: var(--shadow-md);
-      border: 1px solid rgba(226, 232, 240, 0.8);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--ph-blue);
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -122,21 +150,21 @@
 
     .stat-label {
       font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-sub);
+      font-weight: 700;
+      color: var(--ph-steel);
       margin-bottom: 4px;
     }
 
     .stat-value {
-      font-size: 1.65rem;
+      font-size: 1.6rem;
       font-weight: 900;
-      color: var(--text-main);
+      color: var(--ph-navy);
     }
 
     /* 通用白卡 */
     .card {
       background: var(--surface);
-      border-radius: 18px;
+      border-radius: 16px;
       padding: 24px;
       box-shadow: var(--shadow-md);
       border: 1px solid var(--border);
@@ -148,15 +176,17 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e2e8f0;
       flex-wrap: wrap;
       gap: 10px;
     }
 
     .card-title {
       margin: 0;
-      font-size: 1.15rem;
+      font-size: 1.12rem;
       font-weight: 800;
-      color: var(--text-main);
+      color: var(--ph-navy);
       display: flex;
       align-items: center;
       gap: 8px;
@@ -179,13 +209,13 @@
     label {
       font-size: 0.85rem;
       font-weight: 700;
-      color: var(--text-sub);
+      color: var(--ph-steel);
     }
 
     input, select {
       width: 100%;
       padding: 11px 14px;
-      border-radius: 10px;
+      border-radius: 9px;
       border: 1.5px solid var(--border);
       font-size: 0.95rem;
       color: var(--text-main);
@@ -195,17 +225,17 @@
 
     input:focus, select:focus {
       outline: none;
-      border-color: var(--primary);
+      border-color: var(--ph-blue);
       background: #ffffff;
-      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+      box-shadow: 0 0 0 3px rgba(35, 75, 122, 0.14);
     }
 
     .btn-submit {
       width: 100%;
       padding: 12px 18px;
-      border-radius: 10px;
+      border-radius: 9px;
       border: none;
-      background: var(--primary);
+      background: linear-gradient(135deg, #1d3f68 0%, #2b5b94 100%);
       color: white;
       font-size: 0.95rem;
       font-weight: 700;
@@ -215,7 +245,7 @@
     }
 
     .btn-submit:hover {
-      background: var(--primary-hover);
+      background: linear-gradient(135deg, #153052 0%, #224978 100%);
       transform: translateY(-1px);
     }
 
@@ -228,48 +258,47 @@
 
     .btn-ghost {
       background: #f8fafc;
-      color: var(--text-main);
+      color: var(--ph-navy);
       border: 1px solid var(--border);
       padding: 7px 14px;
-      border-radius: 10px;
+      border-radius: 9px;
       font-size: 0.85rem;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       transition: all 0.15s;
     }
 
     .btn-ghost:hover {
-      background: #e2e8f0;
+      background: var(--ph-blue-light);
+      border-color: var(--ph-blue);
     }
 
     /* 員工卡片區 */
     .balance-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
       gap: 14px;
     }
 
     .person-card {
       border: 1.5px solid var(--border);
-      border-radius: 14px;
+      border-radius: 12px;
       padding: 16px;
-      background: #ffffff;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
       cursor: pointer;
       transition: all 0.18s ease;
-      position: relative;
-      overflow: hidden;
     }
 
     .person-card:hover {
-      border-color: var(--primary);
+      border-color: var(--ph-blue);
       transform: translateY(-3px);
       box-shadow: var(--shadow-md);
     }
 
     .person-card.active {
-      border-color: var(--primary);
-      background: var(--primary-light);
-      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+      border-color: var(--ph-blue);
+      background: var(--ph-blue-light);
+      box-shadow: 0 0 0 3px rgba(35, 75, 122, 0.15);
     }
 
     .person-top {
@@ -282,20 +311,21 @@
     .avatar {
       width: 34px;
       height: 34px;
-      border-radius: 10px;
-      background: var(--primary-light);
-      color: var(--primary);
+      border-radius: 9px;
+      background: linear-gradient(135deg, #1d3f68 0%, #33669e 100%);
+      color: #ffffff;
       font-weight: 800;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 0.95rem;
+      border: 1px solid #94a3b8;
     }
 
     .person-name {
       font-weight: 800;
       font-size: 1.05rem;
-      color: var(--text-main);
+      color: var(--ph-navy);
     }
 
     .status-chip {
@@ -308,7 +338,7 @@
     .chip-neg { background: var(--red-bg); color: var(--red); }
 
     .person-amount {
-      font-size: 1.4rem;
+      font-size: 1.35rem;
       font-weight: 900;
       letter-spacing: -0.02em;
     }
@@ -330,14 +360,13 @@
     }
 
     th {
-      background: #f8fafc;
-      color: var(--text-sub);
-      font-size: 0.82rem;
-      font-weight: 700;
-      text-transform: uppercase;
+      background: #f1f5f9;
+      color: var(--ph-navy);
+      font-size: 0.83rem;
+      font-weight: 800;
       letter-spacing: 0.03em;
       padding: 13px 16px;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1.5px solid var(--border);
     }
 
     td {
@@ -352,7 +381,7 @@
     .badge {
       display: inline-block;
       padding: 3px 10px;
-      border-radius: 8px;
+      border-radius: 7px;
       font-size: 0.8rem;
       font-weight: 700;
     }
@@ -361,36 +390,66 @@
 
     .btn-del {
       background: transparent;
-      border: none;
+      border: 1px solid transparent;
       color: #94a3b8;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       font-weight: 600;
       cursor: pointer;
       padding: 5px 10px;
-      border-radius: 8px;
+      border-radius: 7px;
       transition: all 0.15s;
     }
     .btn-del:hover {
       background: var(--red-bg);
+      border-color: #fecdd3;
       color: var(--red);
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--text-sub);
+      font-size: 0.82rem;
+      margin-top: 12px;
     }
 
     @media (max-width: 600px) {
       .hero-banner { padding: 24px 16px 54px 16px; }
-      .hero-title h1 { font-size: 1.4rem; }
+      .hero-title h1 { font-size: 1.3rem; }
       .card { padding: 18px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- 頂部視覺橫幅 -->
+  <!-- 頂部企業識別橫幅 -->
   <div class="hero-banner">
     <div class="hero-inner">
-      <div class="hero-title">
-        <h1>🍱 公司午餐雲端帳本</h1>
-        <p>跨裝置即時雲端同步・餘額與明細自動結算</p>
+      <div class="brand-box">
+        <!-- 品漢精密 PH 金屬藍銀矢量徽標 -->
+        <div class="brand-logo-wrap" title="P. H. Precision Industry">
+          <svg width="58" height="44" viewBox="0 0 120 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="metalGrad" x1="0" y1="0" x2="120" y2="90" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#f8fafc"/>
+                <stop offset="45%" stop-color="#94a3b8"/>
+                <stop offset="70%" stop-color="#e2e8f0"/>
+                <stop offset="100%" stop-color="#64748b"/>
+              </linearGradient>
+            </defs>
+            <!-- 左側 P 幾何鋼構 -->
+            <path d="M22 12 H66 L76 24 V48 L66 58 H40 V78 H22 L12 66 V24 Z" fill="url(#metalGrad)" stroke="#1d4ed8" stroke-width="4" stroke-linejoin="round"/>
+            <rect x="38" y="28" width="22" height="14" rx="2" fill="#1e3a8a"/>
+            <!-- 右側 H 幾何鋼構 -->
+            <path d="M84 12 H102 L110 24 V66 L102 78 H84 V52 H66 V36 H84 Z" fill="url(#metalGrad)" stroke="#1d4ed8" stroke-width="4" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="hero-title">
+          <h1>品漢精密股份有限公司｜午餐管理系統</h1>
+          <div class="en-sub">P. H. Precision Industry Co., Ltd.</div>
+          <p>員工午餐預繳儲值與點餐扣款雲端同步帳本（幣別：新台幣 NT$）</p>
+        </div>
       </div>
+
       <div class="status-pill">
         <span id="statusDot" class="status-dot"></span>
         <span id="dbStatus">連線雲端中...</span>
@@ -402,8 +461,8 @@
     <!-- 頂部總覽數據卡 -->
     <div class="stats-row">
       <div class="stat-card">
-        <span class="stat-label">💰 午餐公積金淨餘額</span>
-        <span id="totalPoolValue" class="stat-value">$0</span>
+        <span class="stat-label">💰 公司午餐公積金淨餘額</span>
+        <span id="totalPoolValue" class="stat-value">NT$0</span>
       </div>
       <div class="stat-card">
         <span class="stat-label">👥 參與員工總人數</span>
@@ -418,7 +477,7 @@
     <!-- 1. 新增記帳區塊 -->
     <div class="card">
       <div class="card-header">
-        <h2 class="card-title">✨ 快速新增一筆紀錄</h2>
+        <h2 class="card-title">✨ 新增午餐收支紀錄</h2>
       </div>
       <div class="form-grid">
         <div class="form-group">
@@ -426,7 +485,7 @@
           <select id="personSelect" onchange="toggleNewPersonInput()">
             <option value="__NEW__">＋ 新增員工...</option>
           </select>
-          <input type="text" id="newPersonInput" placeholder="輸入新員工姓名" style="margin-top:6px;">
+          <input type="text" id="newPersonInput" placeholder="請輸入員工姓名" style="margin-top:6px;">
         </div>
 
         <div class="form-group">
@@ -443,12 +502,12 @@
         </div>
 
         <div class="form-group">
-          <label>金額（元）</label>
-          <input type="number" id="amountInput" placeholder="輸入正數金額" min="1">
+          <label>金額（新台幣 NT$）</label>
+          <input type="number" id="amountInput" placeholder="輸入新台幣金額" min="1">
         </div>
 
         <div class="form-group">
-          <button id="submitBtn" class="btn-submit" onclick="addRecord()">確認送出</button>
+          <button id="submitBtn" class="btn-submit" onclick="addRecord()">確認登錄</button>
         </div>
       </div>
     </div>
@@ -456,7 +515,7 @@
     <!-- 2. 員工餘額卡片區 -->
     <div class="card">
       <div class="card-header">
-        <h2 class="card-title">💳 員工目前餘額（點選卡片可篩選個人明細）</h2>
+        <h2 class="card-title">💳 員工目前帳戶餘額（點選卡片可篩選個人明細）</h2>
         <button class="btn-ghost" onclick="filterByPerson('ALL')">顯示全部員工</button>
       </div>
       <div id="balanceGrid" class="balance-grid">
@@ -467,18 +526,18 @@
     <!-- 3. 交易明細列表 -->
     <div class="card">
       <div class="card-header">
-        <h2 id="historyTitle" class="card-title">📋 最新交易明細（全部）</h2>
+        <h2 id="historyTitle" class="card-title">📋 最新交易明細（全部員工）</h2>
         <button class="btn-ghost" onclick="fetchRecords()">🔄 立即同步最新資料</button>
       </div>
       <div class="table-wrap">
         <table>
           <thead>
             <tr>
-              <th>時間</th>
+              <th>登錄時間</th>
               <th>員工姓名</th>
               <th>類型</th>
               <th>項目 / 備註</th>
-              <th>金額</th>
+              <th>金額（新台幣）</th>
               <th style="text-align:right;">管理</th>
             </tr>
           </thead>
@@ -487,6 +546,10 @@
           </tbody>
         </table>
       </div>
+    </div>
+
+    <div class="footer-note">
+      品漢精密股份有限公司 P. H. Precision Industry｜內部午餐帳務雲端系統（所有金額均以新台幣 NT$ 計算）
     </div>
   </div>
 
@@ -553,9 +616,11 @@
 
     const names = Object.keys(balances);
 
-    // 更新頂部數據統計卡
+    // 更新頂部數據統計卡（新台幣 NT$）
     const poolEl = document.getElementById('totalPoolValue');
-    poolEl.textContent = totalPool >= 0 ? `$${totalPool.toLocaleString()}` : `-$${Math.abs(totalPool).toLocaleString()}`;
+    poolEl.textContent = totalPool >= 0
+      ? `NT$${totalPool.toLocaleString()}`
+      : `-NT$${Math.abs(totalPool).toLocaleString()}`;
     poolEl.className = 'stat-value ' + (totalPool >= 0 ? 'text-green' : 'text-red');
     document.getElementById('totalPeopleValue').textContent = `${names.length} 人`;
     document.getElementById('totalTxValue').textContent = `${allRecords.length} 筆`;
@@ -572,7 +637,7 @@
     }
     toggleNewPersonInput();
 
-    // 渲染員工餘額卡片
+    // 渲染員工餘額卡片（新台幣 NT$）
     const gridEl = document.getElementById('balanceGrid');
     if (names.length === 0) {
       gridEl.innerHTML = '<p style="color:var(--text-sub); margin:0;">目前尚無紀錄，請從上方新增第一筆資料！</p>';
@@ -592,21 +657,21 @@
               <span class="status-chip ${isPos ? 'chip-pos' : 'chip-neg'}">${isPos ? '有餘額' : '待補款'}</span>
             </div>
             <div class="person-amount ${isPos ? 'text-green' : 'text-red'}">
-              ${isPos ? `$${bal.toLocaleString()}` : `-$${Math.abs(bal).toLocaleString()}`}
+              ${isPos ? `NT$${bal.toLocaleString()}` : `-NT$${Math.abs(bal).toLocaleString()}`}
             </div>
           </div>
         `;
       }).join('');
     }
 
-    // 渲染明細表格
+    // 渲染明細表格（新台幣 NT$）
     const tbody = document.getElementById('recordTableBody');
     const filtered = currentFilter === 'ALL'
       ? allRecords
       : allRecords.filter(r => (r.person_name || '').trim() === currentFilter);
 
     document.getElementById('historyTitle').textContent =
-      currentFilter === 'ALL' ? '📋 最新交易明細（全部）' : `📋 ${currentFilter} 的個人交易明細`;
+      currentFilter === 'ALL' ? '📋 最新交易明細（全部員工）' : `📋 ${currentFilter} 的個人交易明細`;
 
     if (filtered.length === 0) {
       tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--text-sub); padding:28px;">尚無符合的交易紀錄</td></tr>';
@@ -623,13 +688,13 @@
         ? '<span class="badge badge-in">儲值</span>'
         : '<span class="badge badge-out">扣款</span>';
       const amtHtml = isDeposit
-        ? `<span class="text-green" style="font-weight:800;">+$${amt.toLocaleString()}</span>`
-        : `<span class="text-red" style="font-weight:800;">-$${Math.abs(amt).toLocaleString()}</span>`;
+        ? `<span class="text-green" style="font-weight:800;">+NT$${amt.toLocaleString()}</span>`
+        : `<span class="text-red" style="font-weight:800;">-NT$${Math.abs(amt).toLocaleString()}</span>`;
 
       return `
         <tr>
           <td style="color:var(--text-sub); font-size:0.86rem;">${dateStr}</td>
-          <td style="font-weight:700;">${r.person_name}</td>
+          <td style="font-weight:700; color:var(--ph-navy);">${r.person_name}</td>
           <td>${badge}</td>
           <td>${r.item || '-'}</td>
           <td>${amtHtml}</td>
@@ -653,7 +718,7 @@
       return;
     }
     if (!rawAmount || rawAmount <= 0) {
-      alert('請輸入大於 0 的正確金額！');
+      alert('請輸入大於 0 的新台幣金額！');
       return;
     }
 
@@ -672,7 +737,7 @@
       .insert([{ person_name: personName, item: item, amount: finalAmount }]);
 
     btn.disabled = false;
-    btn.textContent = '確認送出';
+    btn.textContent = '確認登錄';
 
     if (error) {
       alert('新增失敗：' + error.message);
@@ -712,7 +777,7 @@
   function updateItemPlaceholder() {
     const type = document.getElementById('txType').value;
     const itemInput = document.getElementById('itemInput');
-    itemInput.placeholder = type === 'deposit' ? '例如：預繳 1000 元' : '例如：雞腿便當';
+    itemInput.placeholder = type === 'deposit' ? '例如：預繳 NT$1,000' : '例如：雞腿便當';
   }
 </script>
 
