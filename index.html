@@ -9,7 +9,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      /* 品漢精密企業色系：精密深藍 + 鈦銀金屬灰 */
       --ph-navy: #162d4c;
       --ph-blue: #234b7a;
       --ph-blue-hover: #1a395e;
@@ -28,435 +27,76 @@
       --shadow-md: 0 4px 12px rgba(22, 45, 76, 0.07);
       --shadow-lg: 0 8px 20px -4px rgba(35, 75, 122, 0.25);
     }
+    * { box-sizing: border-box; font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, "Microsoft JhengHei", sans-serif; }
+    body { background-color: var(--bg); color: var(--text-main); margin: 0; padding: 0 0 48px 0; line-height: 1.5; }
 
-    * {
-      box-sizing: border-box;
-      font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, "Microsoft JhengHei", sans-serif;
-    }
-
-    body {
-      background-color: var(--bg);
-      color: var(--text-main);
-      margin: 0;
-      padding: 0 0 48px 0;
-      line-height: 1.5;
-    }
-
-    /* 頂部企業識別橫幅 */
-    .hero-banner {
-      background: linear-gradient(135deg, #0f213a 0%, #1d3f68 55%, #2c5c94 100%);
-      border-bottom: 4px solid #94a3b8;
-      color: white;
-      padding: 28px 20px 64px 20px;
-    }
-
-    .hero-inner {
-      max-width: 1000px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 16px;
-    }
-
-    .brand-box {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .brand-logo-wrap {
-      background: linear-gradient(145deg, #ffffff 0%, #e2e8f0 100%);
-      padding: 8px 12px;
-      border-radius: 12px;
-      border: 2px solid #94a3b8;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .hero-title h1 {
-      margin: 0;
-      font-size: 1.55rem;
-      font-weight: 900;
-      letter-spacing: 0.03em;
-    }
-
-    .hero-title .en-sub {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: #cbd5e1;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-top: 2px;
-    }
-
-    .hero-title p {
-      margin: 6px 0 0 0;
-      font-size: 0.88rem;
-      color: rgba(255, 255, 255, 0.85);
-    }
-
-    .status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(15, 33, 58, 0.65);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(203, 213, 225, 0.35);
-      padding: 8px 16px;
-      border-radius: 999px;
-      font-size: 0.85rem;
-      font-weight: 600;
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #34d399;
-      box-shadow: 0 0 8px #34d399;
-    }
+    .hero-banner { background: linear-gradient(135deg, #0f213a 0%, #1d3f68 55%, #2c5c94 100%); border-bottom: 4px solid #94a3b8; color: white; padding: 28px 20px 64px 20px; }
+    .hero-inner { max-width: 1000px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+    .brand-box { display: flex; align-items: center; gap: 16px; }
+    .brand-logo-wrap { background: linear-gradient(145deg, #ffffff 0%, #e2e8f0 100%); padding: 8px 12px; border-radius: 12px; border: 2px solid #94a3b8; box-shadow: 0 4px 10px rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center; }
+    .hero-title h1 { margin: 0; font-size: 1.55rem; font-weight: 900; letter-spacing: 0.03em; }
+    .hero-title .en-sub { font-size: 0.82rem; font-weight: 700; color: #cbd5e1; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 2px; }
+    .hero-title p { margin: 6px 0 0 0; font-size: 0.88rem; color: rgba(255,255,255,0.85); }
+    .status-pill { display: inline-flex; align-items: center; gap: 8px; background: rgba(15,33,58,0.65); backdrop-filter: blur(8px); border: 1px solid rgba(203,213,225,0.35); padding: 8px 16px; border-radius: 999px; font-size: 0.85rem; font-weight: 600; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #34d399; box-shadow: 0 0 8px #34d399; }
     .status-dot.error { background: #fb7185; box-shadow: 0 0 8px #fb7185; }
 
-    /* 主容器 */
-    .container {
-      max-width: 1000px;
-      margin: -38px auto 0 auto;
-      padding: 0 16px;
-    }
+    .container { max-width: 1000px; margin: -38px auto 0 auto; padding: 0 16px; }
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: var(--surface); border-radius: 14px; padding: 18px 22px; box-shadow: var(--shadow-md); border: 1px solid var(--border); border-top: 3px solid var(--ph-blue); display: flex; flex-direction: column; justify-content: center; transition: all 0.15s ease; }
+    .stat-card.debt-alert { border-top-color: var(--red); cursor: pointer; }
+    .stat-card.debt-alert:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(220,38,38,0.12); }
+    .stat-label { font-size: 0.85rem; font-weight: 700; color: var(--ph-steel); margin-bottom: 4px; }
+    .stat-value { font-size: 1.6rem; font-weight: 900; color: var(--ph-navy); }
+    .stat-value.debt-names { font-size: 1.25rem; line-height: 1.4; word-break: break-word; }
 
-    /* 數據摘要列 */
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
-    }
+    .card { background: var(--surface); border-radius: 16px; padding: 24px; box-shadow: var(--shadow-md); border: 1px solid var(--border); margin-bottom: 24px; }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; gap: 10px; }
+    .card-title { margin: 0; font-size: 1.12rem; font-weight: 800; color: var(--ph-navy); display: flex; align-items: center; gap: 8px; }
+    .header-btns { display: flex; gap: 8px; flex-wrap: wrap; }
 
-    .stat-card {
-      background: var(--surface);
-      border-radius: 14px;
-      padding: 18px 22px;
-      box-shadow: var(--shadow-md);
-      border: 1px solid var(--border);
-      border-top: 3px solid var(--ph-blue);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      transition: all 0.15s ease;
-    }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr)); gap: 14px; align-items: end; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    label { font-size: 0.85rem; font-weight: 700; color: var(--ph-steel); }
+    input, select { width: 100%; padding: 11px 14px; border-radius: 9px; border: 1.5px solid var(--border); font-size: 0.95rem; color: var(--text-main); background: #f8fafc; transition: all 0.15s ease; }
+    input:focus, select:focus { outline: none; border-color: var(--ph-blue); background: #ffffff; box-shadow: 0 0 0 3px rgba(35,75,122,0.14); }
 
-    .stat-card.debt-alert {
-      border-top-color: var(--red);
-      cursor: pointer;
-    }
-    .stat-card.debt-alert:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(220, 38, 38, 0.12);
-    }
+    .btn-submit { width: 100%; padding: 12px 18px; border-radius: 9px; border: none; background: linear-gradient(135deg, #1d3f68 0%, #2b5b94 100%); color: white; font-size: 0.95rem; font-weight: 700; cursor: pointer; box-shadow: var(--shadow-lg); transition: all 0.15s ease; }
+    .btn-submit:hover { background: linear-gradient(135deg, #153052 0%, #224978 100%); transform: translateY(-1px); }
+    .btn-submit:disabled { background: #94a3b8; box-shadow: none; cursor: not-allowed; transform: none; }
+    .btn-ghost { background: #f8fafc; color: var(--ph-navy); border: 1px solid var(--border); padding: 7px 14px; border-radius: 9px; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.15s; }
+    .btn-ghost:hover { background: var(--ph-blue-light); border-color: var(--ph-blue); }
 
-    .stat-label {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--ph-steel);
-      margin-bottom: 4px;
-    }
-
-    .stat-value {
-      font-size: 1.6rem;
-      font-weight: 900;
-      color: var(--ph-navy);
-    }
-
-    .stat-value.debt-names {
-      font-size: 1.25rem;
-      line-height: 1.4;
-      word-break: break-word;
-    }
-
-    /* 通用白卡 */
-    .card {
-      background: var(--surface);
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: var(--shadow-md);
-      border: 1px solid var(--border);
-      margin-bottom: 24px;
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 18px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid #e2e8f0;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .card-title {
-      margin: 0;
-      font-size: 1.12rem;
-      font-weight: 800;
-      color: var(--ph-navy);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    /* 記帳表單 */
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
-      gap: 14px;
-      align-items: end;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    label {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--ph-steel);
-    }
-
-    input, select {
-      width: 100%;
-      padding: 11px 14px;
-      border-radius: 9px;
-      border: 1.5px solid var(--border);
-      font-size: 0.95rem;
-      color: var(--text-main);
-      background: #f8fafc;
-      transition: all 0.15s ease;
-    }
-
-    input:focus, select:focus {
-      outline: none;
-      border-color: var(--ph-blue);
-      background: #ffffff;
-      box-shadow: 0 0 0 3px rgba(35, 75, 122, 0.14);
-    }
-
-    .btn-submit {
-      width: 100%;
-      padding: 12px 18px;
-      border-radius: 9px;
-      border: none;
-      background: linear-gradient(135deg, #1d3f68 0%, #2b5b94 100%);
-      color: white;
-      font-size: 0.95rem;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: var(--shadow-lg);
-      transition: all 0.15s ease;
-    }
-
-    .btn-submit:hover {
-      background: linear-gradient(135deg, #153052 0%, #224978 100%);
-      transform: translateY(-1px);
-    }
-
-    .btn-submit:disabled {
-      background: #94a3b8;
-      box-shadow: none;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .btn-ghost {
-      background: #f8fafc;
-      color: var(--ph-navy);
-      border: 1px solid var(--border);
-      padding: 7px 14px;
-      border-radius: 9px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-
-    .btn-ghost:hover {
-      background: var(--ph-blue-light);
-      border-color: var(--ph-blue);
-    }
-
-    /* 員工卡片區 */
-    .balance-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
-      gap: 14px;
-    }
-
-    .person-card {
-      border: 1.5px solid var(--border);
-      border-radius: 12px;
-      padding: 16px;
-      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-      cursor: pointer;
-      transition: all 0.18s ease;
-      position: relative;
-    }
-
-    .person-card:hover {
-      border-color: var(--ph-blue);
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-md);
-    }
-
-    .person-card.active {
-      border-color: var(--ph-blue);
-      background: var(--ph-blue-light);
-      box-shadow: 0 0 0 3px rgba(35, 75, 122, 0.15);
-    }
-
-    .person-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-      gap: 6px;
-    }
-
-    .avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 9px;
-      background: linear-gradient(135deg, #1d3f68 0%, #33669e 100%);
-      color: #ffffff;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.92rem;
-      border: 1px solid #94a3b8;
-      flex-shrink: 0;
-    }
-
-    .person-name {
-      font-weight: 800;
-      font-size: 1.02rem;
-      color: var(--ph-navy);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .person-actions {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      flex-shrink: 0;
-    }
-
-    .status-chip {
-      font-size: 0.72rem;
-      font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 999px;
-    }
+    .balance-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 14px; }
+    .person-card { border: 1.5px solid var(--border); border-radius: 12px; padding: 16px; background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%); cursor: pointer; transition: all 0.18s ease; position: relative; }
+    .person-card:hover { border-color: var(--ph-blue); transform: translateY(-3px); box-shadow: var(--shadow-md); }
+    .person-card.active { border-color: var(--ph-blue); background: var(--ph-blue-light); box-shadow: 0 0 0 3px rgba(35,75,122,0.15); }
+    .person-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 6px; }
+    .person-id { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .avatar { width: 32px; height: 32px; border-radius: 9px; background: linear-gradient(135deg, #1d3f68 0%, #33669e 100%); color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; font-size: 0.92rem; border: 1px solid #94a3b8; flex-shrink: 0; }
+    .person-name { font-weight: 800; font-size: 1.02rem; color: var(--ph-navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .person-actions { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+    .status-chip { font-size: 0.72rem; font-weight: 700; padding: 2px 7px; border-radius: 999px; }
     .chip-pos { background: var(--green-bg); color: var(--green); }
     .chip-neg { background: var(--red-bg); color: var(--red); }
-
-    /* 刪除員工小按鈕 */
-    .btn-del-person {
-      background: transparent;
-      border: none;
-      color: #94a3b8;
-      cursor: pointer;
-      padding: 4px 6px;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      line-height: 1;
-      transition: all 0.15s;
-    }
-    .btn-del-person:hover {
-      background: var(--red-bg);
-      color: var(--red);
-    }
-
-    .person-amount {
-      font-size: 1.35rem;
-      font-weight: 900;
-      letter-spacing: -0.02em;
-    }
+    .btn-del-person { background: transparent; border: none; color: #94a3b8; cursor: pointer; padding: 4px 6px; border-radius: 6px; font-size: 0.85rem; line-height: 1; transition: all 0.15s; }
+    .btn-del-person:hover { background: var(--red-bg); color: var(--red); }
+    .person-amount { font-size: 1.35rem; font-weight: 900; letter-spacing: -0.02em; }
     .text-green { color: var(--green); }
     .text-red { color: var(--red); }
 
-    /* 明細表格 */
-    .table-wrap {
-      overflow-x: auto;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-      background: white;
-    }
-
-    th {
-      background: #f1f5f9;
-      color: var(--ph-navy);
-      font-size: 0.83rem;
-      font-weight: 800;
-      letter-spacing: 0.03em;
-      padding: 13px 16px;
-      border-bottom: 1.5px solid var(--border);
-    }
-
-    td {
-      padding: 14px 16px;
-      border-bottom: 1px solid #f1f5f9;
-      font-size: 0.94rem;
-    }
-
+    .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; text-align: left; background: white; }
+    th { background: #f1f5f9; color: var(--ph-navy); font-size: 0.83rem; font-weight: 800; letter-spacing: 0.03em; padding: 13px 16px; border-bottom: 1.5px solid var(--border); white-space: nowrap; }
+    td { padding: 14px 16px; border-bottom: 1px solid #f1f5f9; font-size: 0.94rem; }
     tr:last-child td { border-bottom: none; }
     tr:hover td { background: #f8fafc; }
-
-    .badge {
-      display: inline-block;
-      padding: 3px 10px;
-      border-radius: 7px;
-      font-size: 0.8rem;
-      font-weight: 700;
-    }
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 7px; font-size: 0.8rem; font-weight: 700; }
     .badge-in { background: var(--green-bg); color: var(--green); }
     .badge-out { background: var(--red-bg); color: var(--red); }
-
-    .btn-del {
-      background: transparent;
-      border: 1px solid transparent;
-      color: #94a3b8;
-      font-size: 0.84rem;
-      font-weight: 600;
-      cursor: pointer;
-      padding: 5px 10px;
-      border-radius: 7px;
-      transition: all 0.15s;
-    }
-    .btn-del:hover {
-      background: var(--red-bg);
-      border-color: #fecdd3;
-      color: var(--red);
-    }
-
-    .footer-note {
-      text-align: center;
-      color: var(--text-sub);
-      font-size: 0.82rem;
-      margin-top: 12px;
-    }
+    .btn-del { background: transparent; border: 1px solid transparent; color: #94a3b8; font-size: 0.84rem; font-weight: 600; cursor: pointer; padding: 5px 10px; border-radius: 7px; transition: all 0.15s; }
+    .btn-del:hover { background: var(--red-bg); border-color: #fecdd3; color: var(--red); }
+    .footer-note { text-align: center; color: var(--text-sub); font-size: 0.82rem; margin-top: 12px; }
 
     @media (max-width: 600px) {
       .hero-banner { padding: 24px 16px 54px 16px; }
@@ -467,7 +107,6 @@
 </head>
 <body>
 
-  <!-- 頂部企業識別橫幅 -->
   <div class="hero-banner">
     <div class="hero-inner">
       <div class="brand-box">
@@ -492,7 +131,6 @@
           <p>員工午餐預繳儲值與點餐扣款雲端同步帳本（幣別：新台幣 NT$）</p>
         </div>
       </div>
-
       <div class="status-pill">
         <span id="statusDot" class="status-dot"></span>
         <span id="dbStatus">連線雲端中...</span>
@@ -501,7 +139,6 @@
   </div>
 
   <div class="container">
-    <!-- 頂部總覽數據卡 -->
     <div class="stats-row">
       <div class="stat-card">
         <span class="stat-label">💰 剩餘總金額</span>
@@ -511,66 +148,62 @@
         <span class="stat-label">👥 總人數</span>
         <span id="totalPeopleValue" class="stat-value">0 人</span>
       </div>
-      <div id="debtStatCard" class="stat-card" onclick="filterDebtPeople()">
-        <span class="stat-label">⚠️ 需補款名單</span>
+      <div id="debtStatCard" class="stat-card">
+        <span class="stat-label">⚠️ 需補款名單（點擊篩選）</span>
         <span id="debtPeopleValue" class="stat-value debt-names text-green">全員無欠款</span>
       </div>
     </div>
 
-    <!-- 1. 新增記帳區塊 -->
     <div class="card">
       <div class="card-header">
         <h2 class="card-title">✨ 新增午餐收支紀錄</h2>
       </div>
       <div class="form-grid">
         <div class="form-group">
-          <label>員工姓名</label>
-          <select id="personSelect" onchange="toggleNewPersonInput()">
+          <label for="personSelect">員工姓名</label>
+          <select id="personSelect">
             <option value="__NEW__">＋ 新增員工...</option>
           </select>
-          <input type="text" id="newPersonInput" placeholder="請輸入員工姓名" style="margin-top:6px;">
+          <input type="text" id="newPersonInput" placeholder="請輸入員工姓名" maxlength="20" style="margin-top:6px;">
         </div>
-
         <div class="form-group">
-          <label>收支類型</label>
-          <select id="txType" onchange="updateItemPlaceholder()">
+          <label for="txType">收支類型</label>
+          <select id="txType">
             <option value="expense">🍱 點餐扣款（支出）</option>
             <option value="deposit">💰 預繳儲值（存入）</option>
           </select>
         </div>
-
         <div class="form-group">
-          <label>餐點名稱 / 備註</label>
-          <input type="text" id="itemInput" placeholder="例如：雞腿便當">
+          <label for="itemInput">餐點名稱 / 備註</label>
+          <input type="text" id="itemInput" placeholder="例如：雞腿便當" maxlength="50">
         </div>
-
         <div class="form-group">
-          <label>金額（新台幣 NT$）</label>
-          <input type="number" id="amountInput" placeholder="輸入新台幣金額" min="1">
+          <label for="amountInput">金額（新台幣 NT$）</label>
+          <input type="number" id="amountInput" placeholder="輸入新台幣金額" min="1" step="1" inputmode="numeric">
         </div>
-
         <div class="form-group">
-          <button id="submitBtn" class="btn-submit" onclick="addRecord()">確認登錄</button>
+          <button id="submitBtn" class="btn-submit">確認登錄</button>
         </div>
       </div>
     </div>
 
-    <!-- 2. 員工餘額卡片區 -->
     <div class="card">
       <div class="card-header">
         <h2 class="card-title">💳 員工目前帳戶餘額（點卡片篩選明細，按 🗑️ 可刪除離職員工）</h2>
-        <button class="btn-ghost" onclick="filterByPerson('ALL')">顯示全部員工</button>
+        <button class="btn-ghost" id="showAllBtn">顯示全部員工</button>
       </div>
       <div id="balanceGrid" class="balance-grid">
         <p style="color:var(--text-sub); margin:0;">正在從雲端讀取員工資料...</p>
       </div>
     </div>
 
-    <!-- 3. 交易明細列表 -->
     <div class="card">
       <div class="card-header">
         <h2 id="historyTitle" class="card-title">📋 最新交易明細（全部員工）</h2>
-        <button class="btn-ghost" onclick="fetchRecords()">🔄 立即同步最新資料</button>
+        <div class="header-btns">
+          <button class="btn-ghost" id="exportBtn">⬇️ 匯出 CSV</button>
+          <button class="btn-ghost" id="refreshBtn">🔄 立即同步最新資料</button>
+        </div>
       </div>
       <div class="table-wrap">
         <table>
@@ -606,18 +239,64 @@
   let currentFilter = 'ALL'; // 'ALL' | 'DEBT' | 員工姓名
   let debtNamesList = [];
   let currentBalances = {};
+  let currentFiltered = [];
+  let isSubmitting = false;
 
+  // ---------- 工具函式 ----------
+  // 跳脫 HTML，避免姓名/備註含特殊字元造成版面錯亂或被注入惡意程式
+  function esc(s) {
+    return String(s ?? '').replace(/[&<>"']/g, c => (
+      { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+    ));
+  }
+  function money(n) {
+    return n >= 0 ? `NT$${n.toLocaleString()}` : `-NT$${Math.abs(n).toLocaleString()}`;
+  }
+  function nameOf(r) { return (r.person_name || '未命名').trim(); }
+
+  // ---------- 初始化與事件 ----------
   window.addEventListener('DOMContentLoaded', async () => {
+    document.getElementById('personSelect').addEventListener('change', toggleNewPersonInput);
+    document.getElementById('txType').addEventListener('change', updateItemPlaceholder);
+    document.getElementById('submitBtn').addEventListener('click', addRecord);
+    document.getElementById('showAllBtn').addEventListener('click', () => { currentFilter = 'ALL'; renderAll(); });
+    document.getElementById('refreshBtn').addEventListener('click', fetchRecords);
+    document.getElementById('exportBtn').addEventListener('click', exportCSV);
+    document.getElementById('debtStatCard').addEventListener('click', filterDebtPeople);
+
+    // 按 Enter 即可送出
+    ['newPersonInput', 'itemInput', 'amountInput'].forEach(id => {
+      document.getElementById(id).addEventListener('keydown', e => {
+        if (e.key === 'Enter' && !e.isComposing) addRecord();
+      });
+    });
+
+    // 事件委派：員工卡片 / 刪除按鈕（避免把姓名塞進 onclick 字串）
+    document.getElementById('balanceGrid').addEventListener('click', e => {
+      const card = e.target.closest('.person-card');
+      if (!card) return;
+      const name = card.dataset.name;
+      if (e.target.closest('.btn-del-person')) {
+        deleteEmployee(name);
+      } else {
+        filterByPerson(name);
+      }
+    });
+    document.getElementById('recordTableBody').addEventListener('click', e => {
+      const btn = e.target.closest('.btn-del');
+      if (btn) deleteRecord(btn.dataset.id);
+    });
+
     await detectTableAndLoad();
   });
 
   async function detectTableAndLoad() {
     const statusEl = document.getElementById('dbStatus');
     const dotEl = document.getElementById('statusDot');
-    let res = await db.from('ph_money').select('*').limit(1);
-    
+    const res = await db.from('ph_money').select('id').limit(1);
+
     if (res.error) {
-      const resSpace = await db.from('ph money').select('*').limit(1);
+      const resSpace = await db.from('ph money').select('id').limit(1);
       if (!resSpace.error) {
         TABLE_NAME = 'ph money';
       } else {
@@ -626,57 +305,67 @@
         return;
       }
     }
-
     statusEl.textContent = '雲端資料庫已連線';
     dotEl.classList.remove('error');
     await fetchRecords();
   }
 
+  // 分頁讀取全部資料（Supabase 單次預設最多回傳 1000 筆，超過會讓餘額算錯）
   async function fetchRecords() {
-    const { data, error } = await db
-      .from(TABLE_NAME)
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      alert('讀取資料失敗：' + error.message);
-      return;
+    const PAGE = 1000;
+    let from = 0;
+    let rows = [];
+    while (true) {
+      const { data, error } = await db
+        .from(TABLE_NAME)
+        .select('*')
+        .order('created_at', { ascending: false })
+        .order('id', { ascending: false })
+        .range(from, from + PAGE - 1);
+      if (error) {
+        document.getElementById('dbStatus').textContent = '讀取失敗';
+        document.getElementById('statusDot').classList.add('error');
+        alert('讀取資料失敗：' + error.message);
+        return;
+      }
+      rows = rows.concat(data || []);
+      if (!data || data.length < PAGE) break;
+      from += PAGE;
     }
-
-    allRecords = data || [];
+    document.getElementById('dbStatus').textContent = '雲端資料庫已連線';
+    document.getElementById('statusDot').classList.remove('error');
+    allRecords = rows;
     renderAll();
   }
 
+  // ---------- 畫面渲染 ----------
   function renderAll() {
     const balances = {};
     let totalPool = 0;
 
     allRecords.forEach(r => {
-      const name = (r.person_name || '未命名').trim();
+      const name = nameOf(r);
       const amt = Number(r.amount || 0);
-      if (!balances[name]) balances[name] = 0;
-      balances[name] += amt;
+      balances[name] = (balances[name] || 0) + amt;
       totalPool += amt;
     });
 
     currentBalances = balances;
-    const names = Object.keys(balances);
+    const names = Object.keys(balances).sort((a, b) => a.localeCompare(b, 'zh-Hant-TW'));
     debtNamesList = names.filter(n => balances[n] < 0);
 
-    // 若目前篩選的員工已被刪除，自動重置為 ALL
+    if (currentFilter === 'DEBT' && debtNamesList.length === 0) currentFilter = 'ALL';
     if (currentFilter !== 'ALL' && currentFilter !== 'DEBT' && !names.includes(currentFilter)) {
       currentFilter = 'ALL';
     }
 
-    // 1. 更新剩餘總金額與總人數
+    // 總覽
     const poolEl = document.getElementById('totalPoolValue');
-    poolEl.textContent = totalPool >= 0
-      ? `NT$${totalPool.toLocaleString()}`
-      : `-NT$${Math.abs(totalPool).toLocaleString()}`;
+    poolEl.textContent = money(totalPool);
     poolEl.className = 'stat-value ' + (totalPool >= 0 ? 'text-green' : 'text-red');
     document.getElementById('totalPeopleValue').textContent = `${names.length} 人`;
 
-    // 2. 更新「需補款名單」卡片
+    // 需補款名單
     const debtCardEl = document.getElementById('debtStatCard');
     const debtValEl = document.getElementById('debtPeopleValue');
     if (debtNamesList.length === 0) {
@@ -689,19 +378,21 @@
       debtCardEl.classList.add('debt-alert');
     }
 
-    // 3. 更新下拉選單
+    // 下拉選單
     const selectEl = document.getElementById('personSelect');
     const prevSelected = selectEl.value;
-    selectEl.innerHTML = names.map(n => `<option value="${n}">${n}</option>`).join('') +
+    selectEl.innerHTML = names.map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join('') +
                          `<option value="__NEW__">＋ 新增員工...</option>`;
     if (names.includes(prevSelected)) {
       selectEl.value = prevSelected;
     } else if (names.length > 0 && prevSelected !== '__NEW__') {
       selectEl.value = names[0];
+    } else if (names.length === 0) {
+      selectEl.value = '__NEW__';
     }
     toggleNewPersonInput();
 
-    // 4. 渲染員工餘額卡片（右上角加入刪除員工按鈕）
+    // 員工餘額卡片
     const gridEl = document.getElementById('balanceGrid');
     if (names.length === 0) {
       gridEl.innerHTML = '<p style="color:var(--text-sub); margin:0;">目前尚無紀錄，請從上方新增第一筆資料！</p>';
@@ -709,52 +400,46 @@
       gridEl.innerHTML = names.map(name => {
         const bal = balances[name];
         const isPos = bal >= 0;
-        const activeCls = (currentFilter === name || (currentFilter === 'DEBT' && !isPos)) ? 'active' : '';
-        const firstChar = name.charAt(0);
-        const safeName = name.replace(/'/g, "\\'");
+        const isActive = currentFilter === name || (currentFilter === 'DEBT' && !isPos);
         return `
-          <div class="person-card ${activeCls}" onclick="filterByPerson('${safeName}')">
+          <div class="person-card ${isActive ? 'active' : ''}" data-name="${esc(name)}">
             <div class="person-top">
-              <div style="display:flex; align-items:center; gap:8px; min-width:0;">
-                <div class="avatar">${firstChar}</div>
-                <span class="person-name" title="${name}">${name}</span>
+              <div class="person-id">
+                <div class="avatar">${esc(Array.from(name)[0] || '?')}</div>
+                <span class="person-name" title="${esc(name)}">${esc(name)}</span>
               </div>
               <div class="person-actions">
                 <span class="status-chip ${isPos ? 'chip-pos' : 'chip-neg'}">${isPos ? '有餘額' : '需補款'}</span>
-                <button class="btn-del-person" title="刪除 ${name}（含所有歷史資料）" onclick="deleteEmployee(event, '${safeName}')">🗑️</button>
+                <button class="btn-del-person" title="刪除 ${esc(name)}（含所有歷史資料）">🗑️</button>
               </div>
             </div>
-            <div class="person-amount ${isPos ? 'text-green' : 'text-red'}">
-              ${isPos ? `NT$${bal.toLocaleString()}` : `-NT$${Math.abs(bal).toLocaleString()}`}
-            </div>
-          </div>
-        `;
+            <div class="person-amount ${isPos ? 'text-green' : 'text-red'}">${money(bal)}</div>
+          </div>`;
       }).join('');
     }
 
-    // 5. 渲染明細表格
+    // 明細表格
     const tbody = document.getElementById('recordTableBody');
-    let filtered = allRecords;
     let titleText = '📋 最新交易明細（全部員工）';
+    currentFiltered = allRecords;
 
     if (currentFilter === 'DEBT') {
-      filtered = allRecords.filter(r => debtNamesList.includes((r.person_name || '').trim()));
+      currentFiltered = allRecords.filter(r => debtNamesList.includes(nameOf(r)));
       titleText = '⚠️ 需補款員工的交易明細';
     } else if (currentFilter !== 'ALL') {
-      filtered = allRecords.filter(r => (r.person_name || '').trim() === currentFilter);
+      currentFiltered = allRecords.filter(r => nameOf(r) === currentFilter);
       titleText = `📋 ${currentFilter} 的個人交易明細`;
     }
-
     document.getElementById('historyTitle').textContent = titleText;
 
-    if (filtered.length === 0) {
+    if (currentFiltered.length === 0) {
       tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--text-sub); padding:28px;">尚無符合的交易紀錄</td></tr>';
       return;
     }
 
-    tbody.innerHTML = filtered.map(r => {
+    tbody.innerHTML = currentFiltered.map(r => {
       const dateStr = new Date(r.created_at).toLocaleString('zh-TW', {
-        month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+        year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false
       });
       const amt = Number(r.amount);
       const isDeposit = amt >= 0;
@@ -764,45 +449,38 @@
       const amtHtml = isDeposit
         ? `<span class="text-green" style="font-weight:800;">+NT$${amt.toLocaleString()}</span>`
         : `<span class="text-red" style="font-weight:800;">-NT$${Math.abs(amt).toLocaleString()}</span>`;
-
       return `
         <tr>
-          <td style="color:var(--text-sub); font-size:0.86rem;">${dateStr}</td>
-          <td style="font-weight:700; color:var(--ph-navy);">${r.person_name}</td>
+          <td style="color:var(--text-sub); font-size:0.86rem; white-space:nowrap;">${esc(dateStr)}</td>
+          <td style="font-weight:700; color:var(--ph-navy);">${esc(nameOf(r))}</td>
           <td>${badge}</td>
-          <td>${r.item || '-'}</td>
-          <td>${amtHtml}</td>
-          <td style="text-align:right;"><button class="btn-del" onclick="deleteRecord(${r.id})">刪除</button></td>
-        </tr>
-      `;
+          <td>${esc(r.item || '-')}</td>
+          <td style="white-space:nowrap;">${amtHtml}</td>
+          <td style="text-align:right;"><button class="btn-del" data-id="${esc(r.id)}">刪除</button></td>
+        </tr>`;
     }).join('');
   }
 
+  // ---------- 新增 / 刪除 ----------
   async function addRecord() {
+    if (isSubmitting) return; // 防止 Enter 或連點造成重複登錄
+
     const selectVal = document.getElementById('personSelect').value;
     const newName = document.getElementById('newPersonInput').value.trim();
     const personName = selectVal === '__NEW__' ? newName : selectVal;
 
     const txType = document.getElementById('txType').value;
     let item = document.getElementById('itemInput').value.trim();
-    const rawAmount = parseInt(document.getElementById('amountInput').value, 10);
+    const rawAmount = Math.round(Number(document.getElementById('amountInput').value));
 
-    if (!personName) {
-      alert('請輸入或選擇員工姓名！');
-      return;
-    }
-    if (!rawAmount || rawAmount <= 0) {
-      alert('請輸入大於 0 的新台幣金額！');
-      return;
-    }
+    if (!personName) { alert('請輸入或選擇員工姓名！'); return; }
+    if (!Number.isFinite(rawAmount) || rawAmount <= 0) { alert('請輸入大於 0 的新台幣金額！'); return; }
 
-    if (!item) {
-      item = txType === 'deposit' ? '預繳儲值' : '午餐便當';
-    }
-
-    const finalAmount = txType === 'expense' ? -Math.abs(rawAmount) : Math.abs(rawAmount);
+    if (!item) item = txType === 'deposit' ? '預繳儲值' : '午餐便當';
+    const finalAmount = txType === 'expense' ? -rawAmount : rawAmount;
 
     const btn = document.getElementById('submitBtn');
+    isSubmitting = true;
     btn.disabled = true;
     btn.textContent = '儲存中...';
 
@@ -810,73 +488,67 @@
       .from(TABLE_NAME)
       .insert([{ person_name: personName, item: item, amount: finalAmount }]);
 
+    isSubmitting = false;
     btn.disabled = false;
     btn.textContent = '確認登錄';
 
-    if (error) {
-      alert('新增失敗：' + error.message);
-      return;
-    }
+    if (error) { alert('新增失敗：' + error.message); return; }
 
     document.getElementById('itemInput').value = '';
     document.getElementById('amountInput').value = '';
     if (selectVal === '__NEW__') {
       document.getElementById('newPersonInput').value = '';
+      // 新員工登錄後，下拉選單自動選到這位員工（renderAll 會保留此選擇）
+      document.getElementById('personSelect').dataset.pending = personName;
     }
     await fetchRecords();
+    const pending = document.getElementById('personSelect').dataset.pending;
+    if (pending) {
+      const sel = document.getElementById('personSelect');
+      if ([...sel.options].some(o => o.value === pending)) sel.value = pending;
+      delete sel.dataset.pending;
+      toggleNewPersonInput();
+    }
   }
 
-  // 刪除單筆紀錄
   async function deleteRecord(id) {
     if (!confirm('確定要刪除這筆紀錄嗎？刪除後餘額會自動重算。')) return;
-
     const { error } = await db.from(TABLE_NAME).delete().eq('id', id);
-    if (error) {
-      alert('刪除失敗：' + error.message);
-      return;
-    }
+    if (error) { alert('刪除失敗：' + error.message); return; }
     await fetchRecords();
   }
 
-  // 刪除整位員工（包含該員工所有歷史交易資料）
-  async function deleteEmployee(event, name) {
-    event.stopPropagation(); // 避免觸發卡片篩選點擊事件
-
+  async function deleteEmployee(name) {
     const bal = currentBalances[name] || 0;
-    const recordCount = allRecords.filter(r => (r.person_name || '').trim() === name).length;
+    const ids = allRecords.filter(r => nameOf(r) === name).map(r => r.id);
     const statusText = bal > 0
       ? `尚有餘額 NT$${bal.toLocaleString()}（請確認已退還現金）`
       : (bal < 0 ? `尚有欠款 NT$${Math.abs(bal).toLocaleString()}（請確認已補繳現金）` : '帳戶餘額為 NT$0（已結清）');
 
     const msg = `⚠️ 確定要刪除離職員工「${name}」嗎？\n\n` +
                 `• 目前狀態：${statusText}\n` +
-                `• 影響範圍：將永久刪除該員工共 ${recordCount} 筆歷史儲值與點餐紀錄，且無法復原！`;
-
+                `• 影響範圍：將永久刪除該員工共 ${ids.length} 筆歷史儲值與點餐紀錄，且無法復原！\n\n` +
+                `（建議先按「匯出 CSV」備份）`;
     if (!confirm(msg)) return;
+    if (ids.length === 0) return;
 
-    // 找出該員工所有紀錄的 ID 並一次刪除（相容姓名前後空白情況）
-    const idsToDelete = allRecords
-      .filter(r => (r.person_name || '').trim() === name)
-      .map(r => r.id);
-
-    if (idsToDelete.length === 0) return;
-
-    const { error } = await db
-      .from(TABLE_NAME)
-      .delete()
-      .in('id', idsToDelete);
-
-    if (error) {
-      alert('刪除員工資料失敗：' + error.message);
-      return;
+    // 分批刪除，避免一次帶入過多 id 造成請求網址過長
+    const CHUNK = 100;
+    for (let i = 0; i < ids.length; i += CHUNK) {
+      const { error } = await db.from(TABLE_NAME).delete().in('id', ids.slice(i, i + CHUNK));
+      if (error) {
+        alert('刪除員工資料失敗：' + error.message);
+        await fetchRecords();
+        return;
+      }
     }
-
     alert(`已成功移除員工「${name}」及其所有歷史紀錄！`);
     await fetchRecords();
   }
 
+  // ---------- 篩選 / 匯出 ----------
   function filterByPerson(name) {
-    currentFilter = (currentFilter === name && name !== 'ALL') ? 'ALL' : name;
+    currentFilter = (currentFilter === name) ? 'ALL' : name;
     renderAll();
   }
 
@@ -886,16 +558,43 @@
     renderAll();
   }
 
+  // 匯出目前顯示的明細（含 BOM，Excel 開啟中文不會亂碼）
+  function exportCSV() {
+    if (currentFiltered.length === 0) { alert('目前沒有可匯出的資料'); return; }
+    const q = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+    const header = ['登錄時間', '員工姓名', '類型', '項目/備註', '金額(NT$)'];
+    const rows = currentFiltered.map(r => {
+      const amt = Number(r.amount);
+      return [
+        new Date(r.created_at).toLocaleString('zh-TW', { hour12: false }),
+        nameOf(r),
+        amt >= 0 ? '儲值' : '扣款',
+        r.item || '',
+        amt
+      ].map(q).join(',');
+    });
+    const csv = '\uFEFF' + [header.map(q).join(','), ...rows].join('\r\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a');
+    const d = new Date();
+    const stamp = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`;
+    a.href = URL.createObjectURL(blob);
+    a.download = `品漢午餐帳本_${stamp}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
+  }
+
+  // ---------- 表單小功能 ----------
   function toggleNewPersonInput() {
-    const selectEl = document.getElementById('personSelect');
-    const newInput = document.getElementById('newPersonInput');
-    newInput.style.display = selectEl.value === '__NEW__' ? 'block' : 'none';
+    const isNew = document.getElementById('personSelect').value === '__NEW__';
+    document.getElementById('newPersonInput').style.display = isNew ? 'block' : 'none';
   }
 
   function updateItemPlaceholder() {
     const type = document.getElementById('txType').value;
-    const itemInput = document.getElementById('itemInput');
-    itemInput.placeholder = type === 'deposit' ? '例如：預繳 NT$1,000' : '例如：雞腿便當';
+    document.getElementById('itemInput').placeholder = type === 'deposit' ? '例如：預繳 NT$1,000' : '例如：雞腿便當';
   }
 </script>
 
